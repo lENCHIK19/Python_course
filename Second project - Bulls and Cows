@@ -1,0 +1,78 @@
+"""
+projekt_2.py: druhý projekt do Engeto Online Python Akademie "Bulls & Cows".
+
+author: Jelena Půžová
+email: elenabaskova19@gmail.com
+"""
+import random
+import time
+
+
+def generate_secret_number():
+    """Generates a 4-digit unique number, making sure the first number does not start with '0'.
+    Plus adds three more unique random digits from the second population."""
+    first_digit = random.choice("123456789")  
+    rest_of_digits = random.sample("0123456789".replace(first_digit, ""), 3)  
+    return first_digit + ''.join(rest_of_digits)  
+
+def evaluate_guess(secret, guess):
+    """Evaluates the guess and return counts of bulls and cows."""
+    bulls = sum(
+        secret_digit == guess_digit for secret_digit, guess_digit in zip(secret, guess)
+    )
+    cows = len(set(secret) & set(guess)) - bulls
+    return bulls, cows
+
+
+def play_game():
+    """Run the game."""
+    secret = generate_secret_number()
+    attempts = 0
+    print("Hi there!")
+    print("-" * 40)
+    print(
+        "I've generated a random 4-digit number for you.\nLet's play a bulls and cows game!"
+    )
+    print("-" * 40)
+
+    start_game_time = time.time()
+
+    while True:
+        guess = input("Enter a number: ")
+        attempts += 1
+
+        if (
+            len(guess) != 4
+            or not guess.isdigit()
+            or len(set(guess)) != 4
+            or guess[0] == "0"
+        ):
+            print(
+                "Your input is invalid. Make sure you enter a unique 4-digit number, not starting with '0'."
+            )
+            continue
+        bulls, cows = evaluate_guess(secret, guess)
+
+        if bulls == 1:
+          bull_text_write = "bull"
+        else:
+          bull_text_write = "bulls"
+
+        if cows == 1:
+          cow_text_write = "cow"
+        else:
+          cow_text_write = "cows"
+
+        print(f"{bulls} {bull_text_write}, {cows} {cow_text_write}")
+        
+        if bulls == 4:
+            end_game_time = time.time()
+            game_duration_time = round(end_game_time - start_game_time, 3)
+            print(
+                f"Congratulations! You guessed the secret number {secret} in {attempts} attempts."
+            )
+            break
+
+
+if __name__ == "__main__":
+    play_game()
